@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-9-1 10:04:50 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.lzy.jurisdcition.ssh.common.sys.entity.SysLog" table="SYS_LOG" catalog="common_jurisdcition">
+        <id name="logId" type="java.lang.Integer">
+            <column name="LOG_ID" />
+            <generator class="identity" />
+        </id>
+        <property name="logAction" type="java.lang.String">
+            <column name="LOG_ACTION" length="500"/>
+        </property>
+        <property name="logParameters" type="java.lang.String">
+            <column name="LOG_PARAMETERS" length="500"/>
+        </property>
+        <property name="logRes" type="java.lang.String">
+            <column name="LOG_RES" length="500"/>
+        </property>
+        <property name="logAccount" type="java.lang.String">
+            <column name="LOG_ACCOUNT" length="500" />
+        </property>
+        <property name="logIp" type="java.lang.String">
+            <column name="LOG_IP" length="200"/>
+        </property>
+        <property name="logTime" type="java.util.Date">
+            <column name="LOG_TIME" length="200"/>
+        </property>
+    </class>
+</hibernate-mapping>

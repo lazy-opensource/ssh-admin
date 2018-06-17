@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-8-31 18:51:17 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.lzy.jurisdcition.ssh.common.sys.entity.SysOperation" table="SYS_OPERATION" catalog="common_jurisdcition" >
+        <id name="operationId" type="java.lang.Integer">
+            <column name="OPERATION_ID" />
+            <generator class="identity" />
+        </id>
+        <property name="operationName" type="java.lang.String">
+            <column name="OPERATION_NAME" length="50"  />
+        </property>
+        <many-to-one name="sysMenu" class="com.lzy.jurisdcition.ssh.common.sys.entity.SysMenu" >
+            <column name="MENU_ID"  />
+        </many-to-one>
+        <property name="operationAction" type="java.lang.String">
+            <column name="OPERATION_ACTION" length="200"/>
+        </property>
+        <property name="operationRemark" type="java.lang.String">
+            <column name="OPERATION_REMARK" length="200"/>
+        </property>
+        <set name="sysRoles" table="SYS_ROLE_OPERATION" inverse="false" >
+            <key>
+                <column name="OPERATION_ID" not-null="true"/>
+            </key>
+            <many-to-many entity-name="com.lzy.jurisdcition.ssh.common.sys.entity.SysRole">
+                <column name="ROLE_ID" not-null="true"/>
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

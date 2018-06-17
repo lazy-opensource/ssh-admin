@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-8-31 18:51:17 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.lzy.jurisdcition.ssh.common.sys.entity.SysUser" table="SYS_USER" catalog="common_jurisdcition">
+       <id name="userId" type="java.lang.Integer">
+            <column name="USER_ID" />
+            <generator class="identity" />
+        </id>
+        <property name="userName" type="java.lang.String">
+            <column name="USER_NAME" length="50" />
+        </property>
+        <property name="userRealName" type="java.lang.String">
+            <column name="USER_REALNAME" length="50" />
+        </property>
+        <property name="userPassword" type="java.lang.String">
+            <column name="USER_PASSWORD" length="100" />
+        </property>
+        <property name="userRemark" type="java.lang.String" >
+            <column name="USER_REMARK" length="50"  />
+        </property>
+        <property name="userStatus" type="java.lang.Integer" >
+            <column name="USER_STATUS" length="10" default="0" />
+        </property>
+        <set name="sysRoles" table="SYS_USER_ROLE" inverse="false" >
+            <key>
+                <column name="USER_ID" not-null="true" />
+            </key>
+            <many-to-many entity-name="com.lzy.jurisdcition.ssh.common.sys.entity.SysRole" >
+               <column name="ROLE_ID" not-null="true" />
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

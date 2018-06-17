@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-8-31 18:51:17 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class  name="com.lzy.jurisdcition.ssh.common.sys.entity.SysRole" table="SYS_ROLE" catalog="common_jurisdcition" >
+        <id name="roleId" type="java.lang.Integer">
+            <column name="ROLE_ID" />
+            <generator class="native" />
+        </id>
+        <property name="roleName" type="java.lang.String" >
+            <column name="ROLE_NAME" length="50" />
+        </property>
+        <property name="roleStatus" type="java.lang.String">
+            <column name="ROLE_STATUS" length="50"  default="0" />
+        </property>
+        <property name="roleRemark" type="java.lang.String">
+            <column name="ROLE_REMARK" length="50" />
+        </property>
+        <set name="sysMenus" table="SYS_ROLE_MENU" inverse="false" >
+            <key>
+                <column name="ROLE_ID" not-null="true" />
+            </key>
+            <many-to-many entity-name="com.lzy.jurisdcition.ssh.common.sys.entity.SysMenu" order-by="MENU_SORTORDER">
+               <column name="MENU_ID" not-null="true" />
+            </many-to-many>
+        </set>
+        <set name="sysOperations" table="SYS_ROLE_OPERATION" inverse="false" >
+            <key>
+                <column name="ROLE_ID" not-null="true" />
+            </key>
+            <many-to-many entity-name="com.lzy.jurisdcition.ssh.common.sys.entity.SysOperation">
+               <column name="OPERATION_ID" not-null="true" />
+            </many-to-many>
+        </set>
+        <set name="sysUsers" table="SYS_USER_ROLE" inverse="false" >
+            <key>
+                <column name="ROLE_ID" not-null="true"/>
+            </key>
+            <many-to-many entity-name="com.lzy.jurisdcition.ssh.common.sys.entity.SysUser">
+               <column name="USER_ID" not-null="true"/>
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

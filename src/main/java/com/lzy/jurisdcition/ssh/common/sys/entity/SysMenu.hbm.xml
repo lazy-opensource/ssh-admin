@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-8-31 18:51:17 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.lzy.jurisdcition.ssh.common.sys.entity.SysMenu" table="SYS_MENU" catalog="common_jurisdcition" >
+        <id name="menuId" type="java.lang.Integer">
+            <column name="MENU_ID" />
+            <generator class="identity" />
+        </id>
+        <property name="menuName" type="java.lang.String">
+            <column name="MENU_NAME" length="50"/>
+        </property>
+        <many-to-one name="menuParent" class="com.lzy.jurisdcition.ssh.common.sys.entity.SysMenu" >
+            <column name="PARENT_NODE"  />
+        </many-to-one>
+        <property name="menuAction" type="java.lang.String">
+            <column name="MENU_ACTION" length="200" />
+        </property>
+        <property name="menuSortOrder" type="java.lang.Integer">
+            <column name="MENU_SORTORDER" length="50" not-null="true" default="0"/>
+        </property>
+        <property name="menuIcon" type="java.lang.String">
+            <column name="MENU_ICON" length="200" />
+        </property>
+        <property name="menuRemark" type="java.lang.String">
+            <column name="MENU_REMARK" length="200"/>
+        </property>
+        <set name="sysRoles" table="SYS_ROLE_MENU" inverse="false" >
+            <key>
+                <column name="MENU_ID" not-null="true"/>
+            </key>
+            <many-to-many entity-name="com.lzy.jurisdcition.ssh.common.sys.entity.SysRole">
+               <column name="ROLE_ID" not-null="true"/>
+            </many-to-many>
+        </set>
+        <set name="sysOperations"  inverse="true" order-by="OPERATION_ID asc" >
+            <key>
+                <column name="MENU_ID" />
+            </key>
+            <one-to-many class="com.lzy.jurisdcition.ssh.common.sys.entity.SysOperation" />
+        </set>
+        <set name="sysMenus" table="SYS_MENU" inverse="true" order-by="MENU_SORTORDER" lazy="false" >
+            <key>
+                <column name="PARENT_NODE" />
+            </key>
+            <one-to-many class="com.lzy.jurisdcition.ssh.common.sys.entity.SysMenu" />
+        </set>
+    </class>
+</hibernate-mapping>

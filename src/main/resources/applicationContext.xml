@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+    <!-- 读取外部配置文件 -->
+    <context:property-placeholder location="classpath:db.properties" file-encoding="utf-8" />
+		
+	<!-- 基于注解的方式管理bean -->
+	<context:annotation-config />
+	<!-- 导入外部xml -->
+  	<import resource="applicationContext_bean_scan.xml" />
+  	<!-- 数据源 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${db.driverClass}"></property>
+		<property name="url" value="${db.url}"></property>
+		<property name="username" value="${db.user}"></property>
+		<property name="password" value="${db.pwd}"></property>
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="${pool.initialSize}" />
+		<property name="minIdle" value="${pool.minIdle}" />
+		<property name="maxActive" value="${pool.maxActive}" />
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="${pool.maxWait}" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<property name="validationQuery" value="SELECT 'x'" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 ,注意：如果用Oracle，则把poolPreparedStatements配置为true，mysql可以配置为false。 -->
+		<property name="poolPreparedStatements" value="false" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="20" />
+	</bean>
+	<!-- sessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2}</prop>
+				<prop key="hibernate.cache.use_second_level_cache" >true</prop>
+				<!-- hibernate 3
+				<property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>  
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+				-->
+                <!--缓存 -->
+                <prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+			</props>
+		</property>
+		<!-- 实体类映射文件扫描方式   -->
+		<property name="mappingDirectoryLocations">
+			<list>
+				<value>classpath:/com/lzy/jurisdcition/ssh/common/sys/entity</value>
+			</list>
+		</property>
+		<!-- 实体类映射文件注解方式
+		<property name="packagesToScan">
+			<list><value></value></list>
+		</property> -->
+	</bean>
+	<!-- Hibernate4 事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<!-- <tx:annotation-driven transaction-manager="transactionManager" /> -->
+	<tx:advice id="txAdvie" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- 配置事务增强-->
+			<!-- 
+			PROPAGATION_REQUIRED：  支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择。 
+			PROPAGATION_SUPPORTS：支持当前事务，如果当前没有事务，就以非事务方式执行。 
+			PROPAGATION_MANDATORY： 支持当前事务，如果当前没有事务，就抛出异常。 
+			PROPAGATION_REQUIRES_NEW新建事务，如果当前存在事务，把当前事务挂起。
+			 PROPAGATION_NOT_SUPPORTED：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。 
+			PROPAGATION_NEVER： 以非事务方式执行，如果当前存在事务，则抛出异常。 
+			PROPAGATION_NESTED： 支持当前事务，如果当前事务存在，则执行一个嵌套事务，如果当前没有事务，就新建一个事务。
+			 -->
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="edit*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="del*" propagation="REQUIRED" />
+			<tx:method name="remove*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="transfor*" propagation="REQUIRED" />
+			<tx:method name="drawMoney*" propagation="REQUIRED" />
+			<tx:method name="get*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="find*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="select*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="*"  />
+		</tx:attributes>
+	</tx:advice>
+	<!--<tx:annotation-driven transaction-manager="transactionManager"/>-->
+   <aop:config>  
+        <aop:advisor advice-ref="txAdvie" pointcut="execution(* com.lzy.jurisdcition.ssh.common.base.dao.impl..*.*(..))" />
+        <aop:advisor advice-ref="txAdvie" pointcut="execution(* com.lzy.jurisdcition.ssh.common.sys.service.impl..*.*(..))" />
+    </aop:config>
+    <!-- 任务定时器 -->
+    <task:executor id="executor" pool-size="5" />  
+	<task:scheduler id="scheduler" pool-size="10" />  
+	<task:annotation-driven executor="executor" scheduler="scheduler" /> 
+</beans>
